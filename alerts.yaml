@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: example-alert-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: example
+      rules:
+        - alert: HighCPUUsage
+          expr: avg(rate(container_cpu_usage_seconds_total{job="kubelet"}[5m])) by (instance) > 0.5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU Usage on {{ $labels.instance }}"
+            description: "CPU usage is above 50% for more than 5 minutes."
